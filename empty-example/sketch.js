@@ -1,11 +1,13 @@
 let button1 = 255;
 let slider;
 
-let actualColor = [128,0,0]
+let actualColor = [128,0,0];
+let listColors = [[128,0,0]];
+let idxColor = 0;
 let circles = [];
 
 function setup() {
-  createCanvas(1024, 768)
+  createCanvas(1024, 768);
 
   //Create Buttons
   buttonClear = createButton('Clear');
@@ -23,10 +25,15 @@ function setup() {
   buttonDel.position(200, 700);
   buttonDel.mousePressed(del);
 
+  buttonColor = createButton('Change Color');
+  buttonColor.size(70, 50);
+  buttonColor.position(25, 100);
+  buttonColor.mousePressed(changeColor);
+
   //Create CheckBox
   cpCheck = createCheckbox('Control Point');
   cpCheck.position(285, 705);
-  cpCheck.size(250)
+  cpCheck.size(250);
 
   pcCheck = createCheckbox('control traverses');
   pcCheck.position(435, 705);
@@ -36,7 +43,7 @@ function setup() {
 
   slider = createSlider(0, 100, 2);
   slider.position(745, 705);
-  slider.size(250)
+  slider.size(250);
 }
 
 function draw() {
@@ -50,30 +57,64 @@ function draw() {
 
   //Rect that shows the actual color
   noStroke();
-  fill(actualColor[0], actualColor[1], actualColor[2])
-  rect(25, 25, 50, 50)
+  fill(actualColor[0], actualColor[1], actualColor[2]);
+  rect(25, 25, 70, 70);
 
-  // Draw all circles
   for (let i = 0; i < circles.length; i++) {
-    fill(actualColor[0], actualColor[1], actualColor[2]);
+    fill(circles[i][2][0], circles[i][2][1], circles[i][2][2]);
     circle(circles[i][0], circles[i][1], 15);
   }
 }
 
 function clearScreen(){
-  // function to clear the screen
+  console.log("Clear Screen");
+  circles = [];
 }
 
 function add(){
-  pass
+  r = Math.random() * 255;
+  g = Math.random() * 255;
+  b = Math.random() * 255;
+
+  actualColor[0] = r;
+  actualColor[1] = g;
+  actualColor[2] = b;
+
+  listColors.push([r, g, b]);
+  idxColor += 1;
+  console.log(listColors);
+  
 }
 
 function del(){
-  // function to delete
+
+  for (let i = 0; i < circles.length; i++) {
+    if(circles[i][2][0] === actualColor[0] && circles[i][2][1] === actualColor[1] && circles[i][2][2] === actualColor[2]){
+      circles.splice(i, 1);
+      i--;
+    }
+  }
+
+  listColors.pop(actualColor)
+  changeColor()
+}
+
+function changeColor(){
+  console.log("Lista de cores: ", listColors)
+  idxColor += 1;
+
+  if(idxColor >= listColors.length){
+    idxColor = 0;
+  }
+  console.log(listColors[idxColor])
+  actualColor[0] = listColors[idxColor][0];
+  actualColor[1] = listColors[idxColor][1];
+  actualColor[2] = listColors[idxColor][2];
 }
 
 function mousePressed() {
-  if (mouseY < 690 && mouseX > 65 && mouseY > 65) { 
-    circles.push([mouseX, mouseY]);
+  if ((mouseY < 690) && (mouseX > 85 && mouseY > 150)) { 
+    circles.push([mouseX, mouseY, [actualColor[0], actualColor[1], actualColor[2]]]);
+    console.log(circles)
   }
 }
