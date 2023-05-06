@@ -5,6 +5,7 @@ let actualColor = [128,0,0];
 let listColors = [[128,0,0]];
 let idxColor = 0;
 let circles = [];
+let points = [];
 
 function setup() {
   createCanvas(1024, 768);
@@ -61,9 +62,14 @@ function draw() {
   rect(25, 25, 70, 70);
 
   for (let i = 0; i < circles.length; i++) {
-    fill(circles[i][2][0], circles[i][2][1], circles[i][2][2]);
-    circle(circles[i][0], circles[i][1], 15);
+    fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
+    circle(circles[i].x, circles[i].y, 15);
   }
+
+  //
+  drawBezierCurve(circles);
+  drawLines(circles);
+
 }
 
 function clearScreen(){
@@ -114,7 +120,71 @@ function changeColor(){
 
 function mousePressed() {
   if ((mouseY < 690) && (mouseX > 85 && mouseY > 150)) { 
-    circles.push([mouseX, mouseY, [actualColor[0], actualColor[1], actualColor[2]]]);
-    console.log(circles)
+
+    let newCircle = {
+      x: mouseX,
+      y: mouseY,
+      color: [actualColor[0], actualColor[1], actualColor[2]]
+    };
+    circles.push(newCircle);
   }
 }
+
+function interpolate(t, p0, p1) {
+  return { x: (1 - t) * p0.x + t * p1.x, y: (1 - t) * p0.y + t * p1.y };
+}
+
+  
+function deCasteljau(points, nEvaluations) {
+
+  if (points === undefined || points.length < 1) return [];
+  
+  result = [];
+  start = points[0];
+  
+  for (let t = 0; t <= 1; t += 1 / nEvaluations) {
+    controls = points;
+
+    while(controls.length > 1){
+      aux = [];
+
+      for (i = 0; i < controls.length - 1; i++) {
+        aux[i] = interpolate(t, controls[i], controls[i + 1]);
+      }
+
+      controls = aux;
+    }
+    
+    result.push(controls[0]);
+  }
+
+  return result;
+}
+
+function drawBezierCurve(circles) {
+  if (circles.length < 2) return;
+
+  noFill();
+  strokeWeight(2);
+  stroke(0);
+
+  let curvePoints = deCasteljau(circles, 1000); //altear o 1000 para o valor do input
+  beginShape();
+  for (let i = 0; i < curvePoints.length; i++) {
+    vertex(curvePoints[i].x, curvePoints[i].y);
+  }
+  endShape();
+}
+
+function drawLines(circles) {
+  if (circles.length < 2) return;
+  strokeWeight(2);
+  stroke(actualColor[0], actualColor[1], actualColor[2], 63);
+  for (let i = 0; i < circles.length - 1; i++) {
+    pointOrig = circles[i]
+    pointDest = circles[i + 1]
+    line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
+  }
+}
+
+
