@@ -6,6 +6,7 @@ let listColors = [[128,0,0]];
 let idxColor = 0;
 let circles = [];
 let points = [];
+let curvePoints = [];
 
 function setup() {
   createCanvas(1024, 768);
@@ -131,16 +132,13 @@ function mousePressed() {
 }
 
 function interpolate(t, p0, p1) {
-  return { x: (1 - t) * p0.x + t * p1.x, y: (1 - t) * p0.y + t * p1.y };
+  return { x: (1 - t) * p0.x + t * p1.x, y: (1 - t) * p0.y + t * p1.y, color: p0.color};
 }
 
-  
 function deCasteljau(points, nEvaluations) {
 
   if (points === undefined || points.length < 1) return [];
-  
   result = [];
-  start = points[0];
   
   for (let t = 0; t <= 1; t += 1 / nEvaluations) {
     controls = points;
@@ -149,41 +147,62 @@ function deCasteljau(points, nEvaluations) {
       aux = [];
 
       for (i = 0; i < controls.length - 1; i++) {
-        aux[i] = interpolate(t, controls[i], controls[i + 1]);
+        if (controls[i].color.every((cor, index) => cor === controls[i+1].color[index])) {
+          aux[i] = interpolate(t, controls[i], controls[i+1]);
+        } else {
+          break;
+        }
       }
 
       controls = aux;
     }
-    
     result.push(controls[0]);
   }
 
   return result;
 }
 
+
 function drawBezierCurve(circles) {
   if (circles.length < 2) return;
 
-  noFill();
   strokeWeight(2);
-  stroke(0);
+  let pointsByColor = {};
 
-  let curvePoints = deCasteljau(circles, slider.value()); //altear o 1000 para o valor do input
-  beginShape();
-  for (let i = 0; i < curvePoints.length; i++) {
-    vertex(curvePoints[i].x, curvePoints[i].y);
+  for (let i = 0; i < circles.length; i++) {
+    let c = circles[i].color.join();
+    if (pointsByColor[c]) {
+      pointsByColor[c].push(circles[i]);
+    } else {
+      pointsByColor[c] = [circles[i]];
+    }
   }
-  endShape();
+
+  for (let color in pointsByColor) {
+    let points = pointsByColor[color];
+    stroke(0);
+    noFill();
+
+    let result_cast = deCasteljau(points, slider.value());
+    beginShape();
+    for (let i = 0; i < result_cast.length; i++) {
+      vertex(result_cast[i].x, result_cast[i].y);
+    }
+    endShape();
+  }
 }
+
 
 function drawLines(circles) {
   if (circles.length < 2) return;
   strokeWeight(2);
-  stroke(actualColor[0], actualColor[1], actualColor[2], 63);
   for (let i = 0; i < circles.length - 1; i++) {
     pointOrig = circles[i]
     pointDest = circles[i + 1]
-    line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
+    if (pointOrig.color.every((cor, index) => cor === pointDest.color[index])) {
+      stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2]);
+      line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
+    }
   }
 }
 
