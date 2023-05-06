@@ -37,8 +37,8 @@ function setup() {
   cpCheck.position(285, 705);
   cpCheck.size(250);
 
-  pcCheck = createCheckbox('control traverses');
-  pcCheck.position(435, 705);
+  ptCheck = createCheckbox('control traverses');
+  ptCheck.position(435, 705);
 
   pcCheck = createCheckbox('Curves');
   pcCheck.position(595, 705);
@@ -62,14 +62,21 @@ function draw() {
   fill(actualColor[0], actualColor[1], actualColor[2]);
   rect(25, 25, 70, 70);
 
-  for (let i = 0; i < circles.length; i++) {
-    fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
-    circle(circles[i].x, circles[i].y, 15);
+
+  if (pcCheck.checked()){
+    drawBezierCurve(circles);
   }
 
-  //
-  drawBezierCurve(circles);
-  drawLines(circles);
+  if (ptCheck.checked()){
+    drawLines(circles);
+  }
+
+  if (cpCheck.checked()){
+    for (let i = 0; i < circles.length; i++) {
+      fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
+      circle(circles[i].x, circles[i].y, 15);
+    }
+  }
 
 }
 
