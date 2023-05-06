@@ -1,8 +1,8 @@
 let button1 = 255;
 let slider;
 
-let actualColor = [128,0,0];
-let listColors = [[128,0,0]];
+let actualColor = [0, 102, 153];
+let listColors = [[0, 102, 153]];
 let idxColor = 0;
 let circles = [];
 let points = [];
@@ -46,17 +46,14 @@ function setup() {
   buttonColor.position(25, 100);
   buttonColor.mousePressed(changeColor);
 
-  cpCheck = createCheckbox('Control Point');
-  cpCheck.position(checkboxOffset, heigthOthers);
-  cpCheck.checked(true);
+  cbPoints = createCheckbox('Control Point', true);
+  cbPoints.position(checkboxOffset, heigthOthers);
 
-  ptCheck = createCheckbox('Control Traverses');
-  ptCheck.position(checkboxOffset + 120, heigthOthers);
-  ptCheck.checked(true);
+  cbTraverses = createCheckbox('Control Traverses', true);
+  cbTraverses.position(checkboxOffset + 120, heigthOthers);
 
-  pcCheck = createCheckbox('Curves');
-  pcCheck.position(checkboxOffset + 265, heigthOthers);
-  pcCheck.checked(true);
+  cbCurves = createCheckbox('Curves', true);
+  cbCurves.position(checkboxOffset + 265, heigthOthers);
 
   slider = createSlider(0, 100, 2);
   slider.position(sliderOffset, heigthOthers);
@@ -94,15 +91,15 @@ function draw() {
   rect(25, 25, 70, 70);
 
 
-  if (pcCheck.checked()){
+  if (cbCurves.checked()){
     drawBezierCurve(circles);
   }
 
-  if (ptCheck.checked()){
+  if (cbTraverses.checked()){
     drawLines(circles);
   }
 
-  if (cpCheck.checked()){
+  if (cbPoints.checked()){
     for (let i = 0; i < circles.length; i++) {
       noStroke();
       fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
@@ -122,10 +119,12 @@ function clearScreen(){
   circles = [];
 }
 
-function add(){
-  r = Math.random() * 255;
-  g = Math.random() * 255;
-  b = Math.random() * 255;
+function add() {
+  const upperLimit = 220;
+
+  r = Math.random() * upperLimit + (255 - upperLimit);
+  g = Math.random() * upperLimit + (255 - upperLimit);
+  b = Math.random() * upperLimit + (255 - upperLimit);
 
   actualColor[0] = r;
   actualColor[1] = g;
@@ -134,8 +133,8 @@ function add(){
   listColors.push([r, g, b]);
   idxColor += 1;
   console.log(listColors);
-  
 }
+
 
 function del(){
   for (let i = 0; i < circles.length; i++) {
