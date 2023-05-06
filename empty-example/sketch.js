@@ -96,7 +96,7 @@ function draw() {
   }
 
   if (cbTraverses.checked()){
-    drawLines(circles);
+    drawLinesByColor(circles);
   }
 
   if (cbPoints.checked()){
@@ -234,13 +234,28 @@ function drawBezierCurve(circles) {
   }
 }
 
-
-function drawLines(circles) {
+function drawLinesByColor(circles) {
   if (circles.length < 2) return;
   strokeWeight(2);
+
+  const circlesByColor = {};
+  for (let i = 0; i < circles.length; i++) {
+    const color = circles[i].color;
+    if (!circlesByColor[color]) {
+      circlesByColor[color] = [];
+    }
+    circlesByColor[color].push(circles[i]);
+  }
+
+  for (const color in circlesByColor) {
+    drawLines(circlesByColor[color]);
+  }
+}
+
+function drawLines(circles) {
   for (let i = 0; i < circles.length - 1; i++) {
-    pointOrig = circles[i]
-    pointDest = circles[i + 1]
+    const pointOrig = circles[i];
+    const pointDest = circles[i + 1];
     if (pointOrig.color.every((cor, index) => cor === pointDest.color[index])) {
       stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2], 63);
       line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
