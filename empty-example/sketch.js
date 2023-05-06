@@ -76,10 +76,10 @@ function draw() {
       fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
       circle(circles[i].x, circles[i].y, 15);
 
-      if(mouseIsPressed && dist(mouseX, mouseY, circles[i].x, circles[i].y) <= 50){
-     circles[i].x = mouseX;
-     circles[i].y = mouseY;
-}
+      if(mouseIsPressed && dist(mouseX, mouseY, circles[i].x, circles[i].y) <= 15){
+        circles[i].x = mouseX;
+        circles[i].y = mouseY;
+      }
     }
   }
 
