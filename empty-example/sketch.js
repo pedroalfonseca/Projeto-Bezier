@@ -9,22 +9,36 @@ let points = [];
 let curvePoints = [];
 
 function setup() {
-  createCanvas(1024, 768);
+  createCanvas(windowWidth, windowHeight);
+  window.scrollTo(0, 0);
+  document.body.style.overflow = 'hidden';
 
-  //Create Buttons
+  // Define largura total do conjunto de inputs
+  const totalWidth = 920;
+
+  // Auxila centralização dos inputs horizontalmente
+  const buttonOffset = (windowWidth - totalWidth) / 2;
+  const checkboxOffset = buttonOffset + 280;
+  const sliderOffset = checkboxOffset + 380;
+
+  // Altura dos inputs 
+  const heigthButton = 590;
+  const heigthOthers = heigthButton + 5;
+
+  // Define a posição dos botões
   buttonClear = createButton('Clear');
   buttonClear.size(70, 30);
-  buttonClear.position(30, 700);
+  buttonClear.position(buttonOffset, heigthButton);
   buttonClear.mousePressed(clearScreen);
 
   buttonAdd = createButton('Add');
   buttonAdd.size(70, 30);
-  buttonAdd.position(115, 700);
+  buttonAdd.position(buttonOffset + 100, heigthButton);
   buttonAdd.mousePressed(add);
 
   buttonDel = createButton('Del');
   buttonDel.size(70, 30);
-  buttonDel.position(200, 700);
+  buttonDel.position(buttonOffset + 200, heigthButton);
   buttonDel.mousePressed(del);
 
   buttonColor = createButton('Change Color');
@@ -32,33 +46,50 @@ function setup() {
   buttonColor.position(25, 100);
   buttonColor.mousePressed(changeColor);
 
-  //Create CheckBox
   cpCheck = createCheckbox('Control Point');
-  cpCheck.position(285, 705);
-  cpCheck.size(250);
+  cpCheck.position(checkboxOffset, heigthOthers);
+  cpCheck.checked(true);
 
-  ptCheck = createCheckbox('control traverses');
-  ptCheck.position(435, 705);
+  ptCheck = createCheckbox('Control Traverses');
+  ptCheck.position(checkboxOffset + 120, heigthOthers);
+  ptCheck.checked(true);
 
   pcCheck = createCheckbox('Curves');
-  pcCheck.position(595, 705);
+  pcCheck.position(checkboxOffset + 265, heigthOthers);
+  pcCheck.checked(true);
 
   slider = createSlider(0, 100, 2);
-  slider.position(745, 705);
+  slider.position(sliderOffset, heigthOthers);
   slider.size(250);
+  slider.value(100);
 }
 
 function draw() {
-  background(235);
+  background(51);
 
-  //Text on the side of Slider
+  // define o tamanho do retângulo
+  const rectWidth = 960;
+  const rectHeight = 50;
+
+  // Define a posição do retângulo
+  const rectX = (windowWidth - rectWidth) / 2;
+  const rectY = 580;
+
+  // Desenha o retângulo com margem inferior
+  noStroke();
+  fill(255);
+  rect(rectX, rectY, rectWidth, rectHeight, 15);
+
+  // texto do Slider
   fill(0, 102, 153);
   textAlign(CENTER);
-  textSize(25);
-  text(`${slider.value()}`, 705, 725);
+  textSize(18);
+  text(`${slider.value()}`, ((windowWidth - 940) / 2) + 650, 612);
 
-  //Rect that shows the actual color
-  noStroke();
+  // Quadrado com a cor atual
+  c = color('rgba(255,255,255, 0.3)');
+  stroke(c);
+  strokeWeight(1);
   fill(actualColor[0], actualColor[1], actualColor[2]);
   rect(25, 25, 70, 70);
 
@@ -73,6 +104,7 @@ function draw() {
 
   if (cpCheck.checked()){
     for (let i = 0; i < circles.length; i++) {
+      noStroke();
       fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
       circle(circles[i].x, circles[i].y, 15);
 
@@ -124,14 +156,14 @@ function changeColor(){
   if(idxColor >= listColors.length){
     idxColor = 0;
   }
-  console.log(listColors[idxColor])
+
   actualColor[0] = listColors[idxColor][0];
   actualColor[1] = listColors[idxColor][1];
   actualColor[2] = listColors[idxColor][2];
 }
 
 function mousePressed() {
-  if ((mouseY < 690) && (mouseX > 85 && mouseY > 150)) { 
+  if ((mouseY < 560) && (mouseX > 120 && mouseY > 50)) { 
 
     let newCircle = {
       x: mouseX,
@@ -191,12 +223,12 @@ function drawBezierCurve(circles) {
 
   for (let color in pointsByColor) {
     let points = pointsByColor[color];
-    stroke(0);
-    noFill();
 
     let result_cast = deCasteljau(points, slider.value());
     beginShape();
     for (let i = 0; i < result_cast.length; i++) {
+      stroke(result_cast[i].color);
+      noFill();
       vertex(result_cast[i].x, result_cast[i].y);
     }
     endShape();
@@ -211,7 +243,7 @@ function drawLines(circles) {
     pointOrig = circles[i]
     pointDest = circles[i + 1]
     if (pointOrig.color.every((cor, index) => cor === pointDest.color[index])) {
-      stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2]);
+      stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2], 63);
       line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
     }
   }
