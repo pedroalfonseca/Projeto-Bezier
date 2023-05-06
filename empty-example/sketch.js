@@ -168,7 +168,7 @@ function drawBezierCurve(circles) {
   strokeWeight(2);
   stroke(0);
 
-  let curvePoints = deCasteljau(circles, 1000); //altear o 1000 para o valor do input
+  let curvePoints = deCasteljau(circles, slider.value()); //altear o 1000 para o valor do input
   beginShape();
   for (let i = 0; i < curvePoints.length; i++) {
     vertex(curvePoints[i].x, curvePoints[i].y);
