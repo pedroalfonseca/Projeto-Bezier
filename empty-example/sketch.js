@@ -101,9 +101,8 @@ function add(){
 }
 
 function del(){
-
   for (let i = 0; i < circles.length; i++) {
-    if(circles[i][2][0] === actualColor[0] && circles[i][2][1] === actualColor[1] && circles[i][2][2] === actualColor[2]){
+    if(circles[i].color[0] === actualColor[0] && circles[i].color[1] === actualColor[1] && circles[i].color[2] === actualColor[2]){
       circles.splice(i, 1);
       i--;
     }
