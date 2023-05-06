@@ -75,6 +75,11 @@ function draw() {
     for (let i = 0; i < circles.length; i++) {
       fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
       circle(circles[i].x, circles[i].y, 15);
+
+      if(mouseIsPressed && dist(mouseX, mouseY, circles[i].x, circles[i].y) <= 50){
+     circles[i].x = mouseX;
+     circles[i].y = mouseY;
+}
     }
   }
 
@@ -211,5 +216,3 @@ function drawLines(circles) {
     }
   }
 }
-
-
