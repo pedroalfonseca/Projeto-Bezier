@@ -28,21 +28,21 @@ function setup() {
   const heigthOthers = heigthButton + 5;
 
   // Define a posição dos botões
-  buttonClear = createButton('Clear');
-  buttonClear.size(70, 30);
-  buttonClear.position(buttonOffset, heigthButton);
-  buttonClear.mousePressed(clearScreen);
-
   buttonAdd = createButton('Add');
   buttonAdd.size(70, 30);
-  buttonAdd.position(buttonOffset + 100, heigthButton);
+  buttonAdd.position(buttonOffset, heigthButton);
   buttonAdd.mousePressed(add);
 
   buttonDel = createButton('Del');
   buttonDel.size(70, 30);
-  buttonDel.position(buttonOffset + 200, heigthButton);
+  buttonDel.position(buttonOffset + 100, heigthButton);
   buttonDel.mousePressed(del);
   buttonDel.attribute('disabled', '');
+
+  buttonClear = createButton('Clear');
+  buttonClear.size(70, 30);
+  buttonClear.position(buttonOffset + 200, heigthButton);
+  buttonClear.mousePressed(clearScreen);
 
   buttonColor = createButton('Change Color');
   buttonColor.size(70, 50);
