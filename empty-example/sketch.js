@@ -55,10 +55,10 @@ function setup() {
   cbCurves = createCheckbox('Curves', true);
   cbCurves.position(checkboxOffset + 265, heigthOthers);
 
-  slider = createSlider(0, 100, 2);
+  slider = createSlider(0, 1000, 2);
   slider.position(sliderOffset, heigthOthers);
   slider.size(250);
-  slider.value(100);
+  slider.value(1000);
 }
 
 function draw() {
@@ -133,7 +133,6 @@ function add() {
   idxColor += 1;
 }
 
-
 function del(){
   for (let i = 0; i < circles.length; i++) {
     if(circles[i].color[0] === actualColor[0] && circles[i].color[1] === actualColor[1] && circles[i].color[2] === actualColor[2]){
@@ -142,7 +141,11 @@ function del(){
     }
   }
 
-  listColors.pop(actualColor)
+  let index = listColors.findIndex((item) => {
+    return JSON.stringify(item) === JSON.stringify(actualColor);
+  });
+  
+  listColors.splice(index, 1);
   changeColor()
 }
 
@@ -186,11 +189,7 @@ function deCasteljau(points, nEvaluations) {
       aux = [];
 
       for (i = 0; i < controls.length-1; i++) {
-        if (controls[i].color.every((cor, index) => cor === controls[i+1].color[index])) {
-          aux[i] = interpolate(t, controls[i], controls[i+1]);
-        } else {
-          break;
-        }
+        aux[i] = interpolate(t, controls[i], controls[i+1]);
       }
 
       controls = aux;
@@ -229,10 +228,10 @@ function drawLines(circles) {
     for (let i = 0; i < circles.length - 1; i++) {
       const pointOrig = circles[i];
       const pointDest = circles[i + 1];
-      if (pointOrig.color.every((cor, index) => cor === pointDest.color[index])) {
-        stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2], 63);
-        line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
-      }
+
+      stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2], 63);
+      line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
+      
     }
   }
 }
