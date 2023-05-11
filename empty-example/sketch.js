@@ -7,6 +7,8 @@ let idxColor = 0;
 let circles = [];
 let points = [];
 let curvePoints = [];
+let selectedCircle = null;
+let isDragging = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -104,11 +106,6 @@ function draw() {
       noStroke();
       fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
       circle(circles[i].x, circles[i].y, 15);
-
-      if(mouseIsPressed && dist(mouseX, mouseY, circles[i].x, circles[i].y) <= 15){
-        circles[i].x = mouseX;
-        circles[i].y = mouseY;
-      }
     }
   }
 
@@ -162,8 +159,21 @@ function changeColor(){
 }
 
 function mousePressed() {
-  if ((mouseY < 560) && (mouseX > 120 && mouseY > 50)) { 
+  let isInsideCircle = false;
 
+  // Percorre o array de círculos e verifica se o mouse está dentro de um deles
+  for (let i = 0; i < circles.length; i++) {
+    const d = dist(mouseX, mouseY, circles[i].x, circles[i].y);
+    if (d < 15) {
+      selectedCircle = circles[i];
+      isDragging = true;
+      isInsideCircle = true;
+      break;
+    }
+  }
+
+  // Se o mouse não está dentro de um círculo, cria um novo
+  if (!isInsideCircle && mouseY < 560 && mouseX > 120 && mouseY > 50) {
     let newCircle = {
       x: mouseX,
       y: mouseY,
@@ -171,6 +181,18 @@ function mousePressed() {
     };
     circles.push(newCircle);
   }
+}
+
+function mouseDragged() {
+  if (isDragging && selectedCircle) {
+    selectedCircle.x = mouseX;
+    selectedCircle.y = mouseY;
+  }
+}
+
+function mouseReleased() {
+  selectedCircle = null;
+  isDragging = false;
 }
 
 function interpolate(t, p0, p1) {
