@@ -42,6 +42,7 @@ function setup() {
   buttonDel.size(70, 30);
   buttonDel.position(buttonOffset + 200, heigthButton);
   buttonDel.mousePressed(del);
+  buttonDel.attribute('disabled', '');
 
   buttonColor = createButton('Change Color');
   buttonColor.size(70, 50);
@@ -116,6 +117,8 @@ function clearScreen(){
 }
 
 function add() {
+  if (listColors.length < 2) buttonDel.removeAttribute('disabled');
+
   const upperLimit = 220;
 
   r = Math.random() * upperLimit + (255 - upperLimit);
@@ -143,7 +146,9 @@ function del(){
   });
   
   listColors.splice(index, 1);
-  changeColor()
+  changeColor();
+
+  if (listColors.length < 2) buttonDel.attribute('disabled', '');
 }
 
 function changeColor(){
