@@ -96,7 +96,7 @@ function draw() {
   }
 
   if (cbTraverses.checked()){
-    drawLinesByColor(circles);
+    drawLines(circles);
   }
 
   if (cbPoints.checked()){
@@ -115,7 +115,6 @@ function draw() {
 }
 
 function clearScreen(){
-  console.log("Clear Screen");
   circles = [];
 }
 
@@ -132,7 +131,6 @@ function add() {
 
   listColors.push([r, g, b]);
   idxColor += 1;
-  console.log(listColors);
 }
 
 
@@ -149,7 +147,6 @@ function del(){
 }
 
 function changeColor(){
-  console.log("Lista de cores: ", listColors)
   idxColor += 1;
 
   if(idxColor >= listColors.length){
@@ -188,7 +185,7 @@ function deCasteljau(points, nEvaluations) {
     while(controls.length > 1){
       aux = [];
 
-      for (i = 0; i < controls.length - 1; i++) {
+      for (i = 0; i < controls.length-1; i++) {
         if (controls[i].color.every((cor, index) => cor === controls[i+1].color[index])) {
           aux[i] = interpolate(t, controls[i], controls[i+1]);
         } else {
@@ -205,40 +202,9 @@ function deCasteljau(points, nEvaluations) {
 }
 
 
-function drawBezierCurve(circles) {
-  if (circles.length < 2) return;
-
-  strokeWeight(2);
-  let pointsByColor = {};
-
-  for (let i = 0; i < circles.length; i++) {
-    let c = circles[i].color.join();
-    if (pointsByColor[c]) {
-      pointsByColor[c].push(circles[i]);
-    } else {
-      pointsByColor[c] = [circles[i]];
-    }
-  }
-
-  for (let color in pointsByColor) {
-    let points = pointsByColor[color];
-
-    let result_cast = deCasteljau(points, slider.value());
-    beginShape();
-    for (let i = 0; i < result_cast.length; i++) {
-      stroke(result_cast[i].color);
-      noFill();
-      vertex(result_cast[i].x, result_cast[i].y);
-    }
-    endShape();
-  }
-}
-
-function drawLinesByColor(circles) {
-  if (circles.length < 2) return;
-  strokeWeight(2);
-
+function objectByColor(circles) {
   const circlesByColor = {};
+
   for (let i = 0; i < circles.length; i++) {
     const color = circles[i].color;
     if (!circlesByColor[color]) {
@@ -247,18 +213,48 @@ function drawLinesByColor(circles) {
     circlesByColor[color].push(circles[i]);
   }
 
-  for (const color in circlesByColor) {
-    drawLines(circlesByColor[color]);
-  }
+  return circlesByColor;
 }
 
 function drawLines(circles) {
-  for (let i = 0; i < circles.length - 1; i++) {
-    const pointOrig = circles[i];
-    const pointDest = circles[i + 1];
-    if (pointOrig.color.every((cor, index) => cor === pointDest.color[index])) {
-      stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2], 63);
-      line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
+
+  pointsByColor = objectByColor(circles);
+
+  for (let color in pointsByColor) {
+    let circles = pointsByColor[color];
+
+    if (circles.length < 2) return;
+    strokeWeight(4);
+
+    for (let i = 0; i < circles.length - 1; i++) {
+      const pointOrig = circles[i];
+      const pointDest = circles[i + 1];
+      if (pointOrig.color.every((cor, index) => cor === pointDest.color[index])) {
+        stroke(pointOrig.color[0], pointOrig.color[1], pointOrig.color[2], 63);
+        line(pointOrig.x, pointOrig.y, pointDest.x, pointDest.y);
+      }
     }
+  }
+}
+
+function drawBezierCurve(circles) {
+
+  pointsByColor = objectByColor(circles);
+
+  for (let color in pointsByColor) {
+    let points = pointsByColor[color];
+
+    if (points.length < 2) return;
+    strokeWeight(4);
+
+    let result_cast = deCasteljau(points, slider.value());
+
+    beginShape();
+    for (let i = 0; i < result_cast.length; i++) {
+      stroke(result_cast[i].color);
+      noFill();
+      vertex(result_cast[i].x, result_cast[i].y);
+    }
+    endShape();
   }
 }
