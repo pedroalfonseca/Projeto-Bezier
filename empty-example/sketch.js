@@ -58,10 +58,10 @@ function setup() {
   cbCurves = createCheckbox('Curves', true);
   cbCurves.position(checkboxOffset + 265, heigthOthers);
 
-  slider = createSlider(0, 1000, 2);
+  slider = createSlider(0, 100, 2);
   slider.position(sliderOffset, heigthOthers);
   slider.size(250);
-  slider.value(1000);
+  slider.value(100);
 }
 
 function draw() {
@@ -185,6 +185,17 @@ function mousePressed() {
       color: [actualColor[0], actualColor[1], actualColor[2]]
     };
     circles.push(newCircle);
+  }
+}
+
+function doubleClicked(){
+  for (let i = 0; i < circles.length; i++) {
+    const d = dist(mouseX, mouseY, circles[i].x, circles[i].y);
+    if (d < 15) {
+      circles.splice(i, 1);
+      i--;
+      
+    }
   }
 }
 
