@@ -58,10 +58,10 @@ function setup() {
   cbCurves = createCheckbox('Curves', true);
   cbCurves.position(checkboxOffset + 265, heigthOthers);
 
-  slider = createSlider(0, 100, 2);
+  slider = createSlider(0, 1000, 2);
   slider.position(sliderOffset, heigthOthers);
   slider.size(250);
-  slider.value(100);
+  slider.value(1000);
 }
 
 function draw() {
@@ -105,7 +105,14 @@ function draw() {
   if (cbPoints.checked()){
     for (let i = 0; i < circles.length; i++) {
       noStroke();
-      fill(circles[i].color[0], circles[i].color[1], circles[i].color[2]);
+      const [r, g, b] = circles[i].color;
+
+      if (r === actualColor[0] && g === actualColor[1] && b === actualColor[2]) {
+        fill(circles[i].color);
+      } else {
+        fill(r, g, b, 63);
+      }
+
       circle(circles[i].x, circles[i].y, 15);
     }
   }
@@ -135,7 +142,9 @@ function add() {
 
 function del(){
   for (let i = 0; i < circles.length; i++) {
-    if(circles[i].color[0] === actualColor[0] && circles[i].color[1] === actualColor[1] && circles[i].color[2] === actualColor[2]){
+    const [r, g, b] = circles[i].color;
+
+    if(r === actualColor[0] && g === actualColor[1] && b === actualColor[2]){
       circles.splice(i, 1);
       i--;
     }
@@ -169,7 +178,9 @@ function mousePressed() {
   // Percorre o array de círculos e verifica se o mouse está dentro de um deles
   for (let i = 0; i < circles.length; i++) {
     const d = dist(mouseX, mouseY, circles[i].x, circles[i].y);
-    if (d < 15) {
+    const [r, g, b] = circles[i].color;
+
+    if (d < 15 && r === actualColor[0] && g === actualColor[1] && b === actualColor[2]) {
       selectedCircle = circles[i];
       isDragging = true;
       isInsideCircle = true;
@@ -191,10 +202,11 @@ function mousePressed() {
 function doubleClicked(){
   for (let i = 0; i < circles.length; i++) {
     const d = dist(mouseX, mouseY, circles[i].x, circles[i].y);
-    if (d < 15) {
+    const [r, g, b] = circles[i].color;
+
+    if(d < 15 && r === actualColor[0] && g === actualColor[1] && b === actualColor[2]){
       circles.splice(i, 1);
       i--;
-      
     }
   }
 }
@@ -288,7 +300,14 @@ function drawBezierCurve(circles) {
 
     beginShape();
     for (let i = 0; i < result_cast.length; i++) {
-      stroke(result_cast[i].color);
+      const [r, g, b] = result_cast[i].color;
+
+      if (r === actualColor[0] && g === actualColor[1] && b === actualColor[2]) {
+        stroke(result_cast[i].color);
+      } else {
+        stroke(r, g, b, 127);
+      }
+
       noFill();
       vertex(result_cast[i].x, result_cast[i].y);
     }
