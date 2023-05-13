@@ -56,7 +56,6 @@ function doubleClicked() {
             i--;
         }
     }
-
 }
 
 /**
@@ -140,12 +139,19 @@ function del() {
  * @returns {void}
  */
 function changeColor() {
-    idxColor = (idxColor + 1) % listColors.length;
-    actualColor = listColors[idxColor];
+    idxColor += 1;
+
+    if(idxColor >= listColors.length){
+      idxColor = 0;
+    }
+  
+    actualColor[0] = listColors[idxColor][0];
+    actualColor[1] = listColors[idxColor][1];
+    actualColor[2] = listColors[idxColor][2];
 }
 
 /**
- * Função que interpola os pontos usando polinômios de Bernstein
+ * Função que interpola os pontos
  * @returns {Object}
  */
 function interpolate(t, p0, p1) {
@@ -186,11 +192,11 @@ function drawBezierCurve() {
 
         strokeWeight(4);
         // deCasteljau retorna os pontos intermediarios
-        const controlPoints = deCasteljau(points, slider.value());
+        const interPoints = deCasteljau(points, slider.value());
 
-        // Cria do desenho da curva de Bezier onde os pontos de controle são os vertices da curva
+        // Cria do desenho da curva de Bezier onde os pontos intermediarios são os vertices da curva
         beginShape();
-        for (const { x, y, color } of controlPoints) {
+        for (const { x, y, color } of interPoints) {
             const [r, g, b] = color;
 
             if (r === actualColor[0] && g === actualColor[1] && b === actualColor[2]) {
